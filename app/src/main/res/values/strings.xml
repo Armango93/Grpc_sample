@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Grpc_sample</string>
+    <string name="helloText">Say Hello!</string>
+    <string name="inputNameHint">Enter your name</string>
+    <string name="emptyInputError">You need to enter your name!</string>
+</resources>

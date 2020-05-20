@@ -1,0 +1,61 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply plugin: 'idea'
+apply plugin: 'com.google.protobuf'
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+            main.java.srcDirs += 'src/main/kotlin'
+        }
+    }
+}
+
+compileKotlin {
+    dependsOn('generateProto')
+}
+
+compileTestKotlin {
+    dependsOn('generateProto')
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java { option 'lite' }
+            }
+            task.plugins {
+                grpc {
+                    outputSubDir = 'java'
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:multidex:1.0.3'
+
+    api "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+    api "io.grpc:grpc-okhttp:${grpcVersion}"
+    api "io.grpc:grpc-stub:${grpcVersion}"
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
+}
